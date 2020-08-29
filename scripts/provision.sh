@@ -1,5 +1,10 @@
 #!/bin/bash
 
+if [[ $EUID -ne 0 ]]; then
+   echo "You must login as root to execute this script."
+   exit 1
+fi
+
 echo 'Upgrading device.'
 
 sudo apt-get update

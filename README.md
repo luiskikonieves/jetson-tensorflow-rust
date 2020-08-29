@@ -1,6 +1,6 @@
-# py-tensorflow-rust
+# py-jetson
 
-Repository for playing with all things Jetson Nano and Tensorflow. 
+Repository for playing with a Jetson Nano. 
 
 # How to Build
 
