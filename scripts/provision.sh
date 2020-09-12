@@ -27,7 +27,7 @@ yes | sudo pip3 install -U pip testresources setuptools numpy==1.16.1 future==0.
 # TF-2.2
 yes | sudo pip3 install --pre --extra-index-url https://developer.download.nvidia.com/compute/redist/jp/v44 tensorflow==2.2.0+nv20.7
 
-# TODO: Install Python packages
+# Install program's requirements
 yes | sudo pip3 install -r ../requirements.txt
 
 # Remove deprecated packages
