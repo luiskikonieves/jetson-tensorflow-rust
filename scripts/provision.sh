@@ -5,33 +5,47 @@ if [[ $EUID -ne 0 ]]; then
    exit 1
 fi
 
-echo 'Upgrading device.'
+# Create a user to run the service
+USERNAME=jetson
+echo 'Username: '$USERNAME
 
+echo 'Updating device.'
 sudo apt-get update
-
 sudo apt full-upgrade -y
 
 echo 'Downloading packages.'
-
-# Required packages for TensorFlow:
-sudo apt-get install libhdf5-serial-dev hdf5-tools libhdf5-dev zlib1g-dev zip libjpeg8-dev liblapack-dev libblas-dev gfortran -y
-
+sudo apt-get install git cmake -y
+sudo apt-get install libpython3-dev python3-numpy python3-pip -y
 # Install pip3
-sudo apt-get install python3-pip -y
 yes | sudo pip3 install -U pip testresources setuptools
-
-# Python package dependencies
-yes | sudo pip3 install -U pip testresources setuptools numpy==1.16.1 future==0.17.1 mock==3.0.5 h5py==2.9.0 keras_preprocessing==1.0.5 keras_applications==1.0.8 gast==0.2.2 futures protobuf pybind11
-# $ sudo pip3 install -U numpy==1.16.1 future==0.18.2 mock==3.0.5 h5py==2.10.0 keras_preprocessing==1.1.1 keras_applications==1.0.8 gast==0.2.2 futures protobuf pybind11
-
-# TF-2.2
-yes | sudo pip3 install --pre --extra-index-url https://developer.download.nvidia.com/compute/redist/jp/v44 tensorflow==2.2.0+nv20.7
-
 # Install program's requirements
 yes | sudo pip3 install -r ../requirements.txt
 
-# Remove deprecated packages
-sudo apt auto-remove -y
+# Install PyTorch
+echo 'Installing PyTorch.'
+wget https://nvidia.box.com/shared/static/wa34qwrwtk9njtyarwt5nvo6imenfy26.whl -O torch-1.7.0-cp36-cp36m-linux_aarch64.whl
+pip3 install Cython
+sudo apt install libjpeg-dev libfreetype6-dev libpng-dev libopenblas-base libopenmpi-dev
+pip3 install numpy torch-1.7.0-cp36-cp36m-linux_aarch64.whl
+
+git clone --branch v0.8.1 https://github.com/pytorch/vision torchvision
+cd torchvision
+export BUILD_VERSION=0.8.1
+sudo python3 setup.py install
+# ??? Why do the nvidia instructions need this????
+# cd ../
+
+cd /home/$USERNAME/python-envs/env/lib/python3.6/site-packages
+
+if id -u $USERNAME > /dev/null 2>&1;
+then
+    echo "User exists: $USERNAME"
+else
+    echo "Adding user $USERNAME"
+
+    sudo useradd -s /bin/bash -m -U $USERNAME
+    sudo addgroup $USERNAME sudo > /dev/null 2>&1
+fi
 
 # Create the service
 echo 'Creating systemd service.'
@@ -41,7 +55,7 @@ echo 'Creating systemd service.'
   echo 'Description=Object detection service that streams on the network'
   echo ''
   echo '[Service]'
-  echo 'ExecStart=/usr/bin/camera_nano.py'
+  echo 'ExecStart='$PWD'/camera_nano.py'
   echo 'Restart=on-failure'
   echo 'RestartSec=5'
   echo 'User=jetson'
@@ -56,6 +70,10 @@ sudo systemctl --user enable camera-nano.service
 
 sync
 
+# Remove deprecated packages
+echo 'Cleaning up.'
+sudo apt auto-remove -y
+
 echo
-echo 'Updates complete. Please reboot.'
-echo
+echo 'Updates complete. Rebooting'
+sudo reboot

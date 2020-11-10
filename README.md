@@ -2,10 +2,9 @@
 
 Repository for playing with a Jetson Nano. 
 
-
 ## Requirements
 
-## Hardware
+### Hardware
 
 You will need the following hardware to run this project:
 
@@ -15,7 +14,7 @@ You will need the following hardware to run this project:
 * [Raspberry Pi Camera Module v2](https://www.digikey.com/catalog/en/partgroup/raspberry-pi-camera-module-v2/63181?utm_adgroup=Programmers%20Dev&utm_source=google&utm_medium=cpc&utm_campaign=Dynamic%20Search_RLSA_Buyers&utm_term=&utm_content=Programmers%20Dev&gclid=Cj0KCQjwhb36BRCfARIsAKcXh6H0b37_zqrGRSlMun8dv3EY0uEGLlyEkfF78_dqaqqi8Fb2kC6oz9IaAtW8EALw_wcB) or equivalent
 * Cat 5 or Wi-Fi connection
 
-## Software
+### Software
 
 You will need the following software to run this project:
 
@@ -24,8 +23,11 @@ You will need the following software to run this project:
 
 ### Installing and Running Application
 
+Clone the repository by running `git clone --recursive https://github.com/luiskikonieves/py-jetson.git` on your 
+JetsonNano. You may need to install git if it wasn't included in your JetPack version: `sudo apt-get install git`.
+
 This program requires some other tools to be installed on the Jetson Nano. All of these can be installed
-by running `scripts/provision.sh` on the Jetson Nano. 
+by running `scripts/provision.sh` on the Jetson Nano.  
 
 This script will also create a systemd service which will automatically start the program upon boot and restart
 the program upon crash. The program may be disabled by running `sudo systemctl --user disable camera-nano.service`.
