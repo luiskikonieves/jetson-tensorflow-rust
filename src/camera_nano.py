@@ -1,8 +1,5 @@
-import os
-import time
-import queue
 import cv2
-import numpy as np
+from torch_nano import *
 
 
 def gstreamer_pipeline_in(capture_width=1280, capture_height=720, display_width=1280, display_height=720, framerate=60,
@@ -60,14 +57,15 @@ def camera_nano():
         while out.isOpened:
             # Get frame
             ret, frame = camera.read()
-            # TODO: Update this to include object detection
-            # TODO : Run a live image frame by frame through PyTorch. Capture the result in a variable and print on the image.
-            # TODO: Draw a bounding box over the image with the predicted result.
+
+            # TODO: What do we do with the results?
+            res = torch_nano.run_inference(frame)
+            print(res)
 
             # TODO : Test on your home network, it doesn't work with the gstreamer pipeline above.
-            # out.write(frame)
+            # out.write(res)
 
-            cv2.imshow("Camera", frame)
+            #cv2.imshow("Camera", res)
             keyCode = cv2.waitKey(30) & 0xFF
             # Stop the program on the ESC key
             if keyCode == 27:

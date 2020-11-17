@@ -1,3 +1,0 @@
-[submodule "torch-vision"]
-	path = torchvision
-	url = git@github.com:pytorch/vision.git
